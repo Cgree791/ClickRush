@@ -38,11 +38,10 @@
 Download the latest version here:  
 🔗 [ClickRush v2 Release](https://github.com/Cgree791/ClickRush/releases/tag/ClickRushv2)
 
-After downloading:
+Then just download and run `ClickRush.py`  
+*(depending on version)*
 
 1. Extract the `.zip` file  
-2. Run `ClickRush.exe`  
-   *(or run `main.py` if using source code)*
+2. Run `ClickRush.exe`
 
 ---
-
