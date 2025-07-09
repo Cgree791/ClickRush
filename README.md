@@ -1,6 +1,6 @@
 # 🚀 ClickRush
 
-**ClickRush** is a high-speed autoclicker for Windows built with Python. It's lightweight, fast, and customizable, perfect for when you need clicks at insane speeds.
+**ClickRush** is a high-speed autoclicker for Windows built with Python. It's lightweight, fast, and customizable — perfect when you need clicks at insane speeds.
 
 ---
 
@@ -11,17 +11,17 @@
   *⚠️ Warning:* Going above 100 CPS may cause lag or freezing depending on your system.
 
 - 🎯 **Toggle Key**  
-  Set your own hotkey to start/stop clicking.  
-  - Most keys are supported.
-  - ❌ Not supported: `Shift`, `Enter`, `Tab`, `Escape`, `Backspace` (Some keys may insert a cube and doesn't work).
-  - ✅ Supported: Letters, numbers, symbols.
+  Choose your own hotkey to start/stop clicking.  
+  - ✅ Supported: Letters, numbers, symbols  
+  - ❌ Not supported: `Shift`, `Enter`, `Tab`, `Escape`, `Backspace`  
+    *(Some unsupported keys may insert a cube or not function correctly)*
 
 - 🖱️ **Mouse Button Support**  
-  - Left or right click
+  - Left or right click  
   - Single or double-click mode
 
 - 💻 **Simple UI**  
-  Built with `tkinter`. Minimal and clean, does the job without slowing you down.
+  Built with `tkinter`. Minimal and clean — does the job without slowing you down.
 
 ---
 
@@ -29,14 +29,20 @@
 
 - **Windows OS**
 - **Python 3.9+**
-- Recommended: Keep CPS below 100 for system safety
+- Recommended: Keep CPS under 100 for stability
 
 ---
 
-## 🛠️ Installation
+## 🛠️ Download & Run
 
-1. **Clone this repo:**
+Download the latest version here:  
+🔗 [ClickRush v2 Release](https://github.com/Cgree791/ClickRush/releases/tag/ClickRushv2)
 
-```bash
-git clone https://github.com/your-username/ClickRush.git
-cd ClickRush
+After downloading:
+
+1. Extract the `.zip` file  
+2. Run `ClickRush.exe`  
+   *(or run `main.py` if using source code)*
+
+---
+
