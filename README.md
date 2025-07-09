@@ -13,15 +13,15 @@
 - 🎯 **Toggle Key**  
   Set your own hotkey to start/stop clicking.  
   - Most keys are supported.
-  - ❌ Not supported: `Shift`, `Enter`, `Tab`, `Escape`, `Backspace` (Backspace inserts a cube and doesn't work).
-  - ✅ Supported: Letters, numbers, symbols like `~!@#$%^&*`, `Alt` keys.
+  - ❌ Not supported: `Shift`, `Enter`, `Tab`, `Escape`, `Backspace` (Some keys may insert a cube and doesn't work).
+  - ✅ Supported: Letters, numbers, symbols.
 
 - 🖱️ **Mouse Button Support**  
   - Left or right click
   - Single or double-click mode
 
 - 💻 **Simple UI**  
-  Built with `tkinter`. Minimal and clean — does the job without slowing you down.
+  Built with `tkinter`. Minimal and clean, does the job without slowing you down.
 
 ---
 
