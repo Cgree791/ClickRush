@@ -1,14 +1,42 @@
-# ClickRush 
-## is a high-speed autoclicker for Windows built with Python. Designed for raw performance, it offers adjustable CPS, keyboard toggle support, and fast, reliable clicking, no bloat, just power.
+# 🚀 ClickRush
 
-⚙️ Custom CPS: Click rates from 1 up to 10,000 (use responsibly). Anything above 100 CPS may cause lag or freezing depending on your system.
+**ClickRush** is a high-speed autoclicker for Windows built with Python. It's lightweight, fast, and customizable — perfect for when you need clicks at insane speeds.
 
-🎯 Keybind Toggle: Most keys are supported, toggle clicking with a single keystroke.
-⚠️ Note: Shift, Enter, Tab, Escape, and Backspace are unsupported.
-Symbols do work.
+---
 
-🖱️ Mouse Button Choice: Left or right click, single or double mode.
+## 🔧 Features
 
-ClickRush may not be the prettiest, but it's fast, lightweight, and built to outperform.
+- ⚙️ **Custom CPS**  
+  Set your clicks per second from **1 to 10,000**.  
+  *⚠️ Warning:* Going above 100 CPS may cause lag or freezing depending on your system.
 
-```ClickRush is a fast, no-frills Windows autoclicker built with Python. With adjustable CPS up to 10,000, customizable keybinds, and left/right click modes, it's built for speed just use responsibly above 100 CPS.```
+- 🎯 **Toggle Key**  
+  Set your own hotkey to start/stop clicking.  
+  - Most keys are supported.
+  - ❌ Not supported: `Shift`, `Enter`, `Tab`, `Escape`, `Backspace` (Backspace inserts a cube and doesn't work).
+  - ✅ Supported: Letters, numbers, symbols like `~!@#$%^&*`, `Alt` keys.
+
+- 🖱️ **Mouse Button Support**  
+  - Left or right click
+  - Single or double-click mode
+
+- 💻 **Simple UI**  
+  Built with `tkinter`. Minimal and clean — does the job without slowing you down.
+
+---
+
+## ⚠️ System Requirements
+
+- **Windows OS**
+- **Python 3.9+**
+- Recommended: Keep CPS below 100 for system safety
+
+---
+
+## 🛠️ Installation
+
+1. **Clone this repo:**
+
+```bash
+git clone https://github.com/your-username/ClickRush.git
+cd ClickRush
