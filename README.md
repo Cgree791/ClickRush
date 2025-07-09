@@ -1,6 +1,6 @@
 # 🚀 ClickRush
 
-**ClickRush** is a high-speed autoclicker for Windows built with Python. It's lightweight, fast, and customizable — perfect for when you need clicks at insane speeds.
+**ClickRush** is a high-speed autoclicker for Windows built with Python. It's lightweight, fast, and customizable, perfect for when you need clicks at insane speeds.
 
 ---
 
