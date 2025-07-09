@@ -1,0 +1,249 @@
+import ctypes
+import time
+from threading import Thread, Event, Lock
+import tkinter as tk
+from tkinter import ttk
+import pynput
+import sys
+import os
+
+PUL = ctypes.POINTER(ctypes.c_ulong)
+
+class MOUSEINPUT(ctypes.Structure):
+    _fields_ = [
+        ("dx", ctypes.c_long),
+        ("dy", ctypes.c_long),
+        ("mouseData", ctypes.c_ulong),
+        ("dwFlags", ctypes.c_ulong),
+        ("time", ctypes.c_ulong),
+        ("dwExtraInfo", PUL)
+    ]
+
+class INPUT(ctypes.Structure):
+    class _INPUT(ctypes.Union):
+        _fields_ = [("mi", MOUSEINPUT)]
+    _anonymous_ = ("_input",)
+    _fields_ = [
+        ("type", ctypes.c_ulong),
+        ("_input", _INPUT)
+    ]
+
+INPUT_MOUSE = 0
+MOUSEEVENTF_LEFTDOWN = 0x0002
+MOUSEEVENTF_LEFTUP = 0x0004
+MOUSEEVENTF_RIGHTDOWN = 0x0008
+MOUSEEVENTF_RIGHTUP = 0x0010
+
+user32 = ctypes.windll.user32
+
+def send_mouse_input(flags):
+    inp = INPUT()
+    inp.type = INPUT_MOUSE
+    inp.mi = MOUSEINPUT(0, 0, 0, flags, 0, None)
+    user32.SendInput(1, ctypes.byref(inp), ctypes.sizeof(inp))
+
+clicking = False
+clicking_lock = Lock()
+cps = 10
+keybind = "/"
+click_button = "left"
+click_type = "single"
+
+exit_event = Event()
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+def update_status_label():
+    with clicking_lock:
+        current_clicking = clicking
+    title = "Clicking - ClickRush" if current_clicking else "Stopped - ClickRush"
+    root.title(title)
+
+    start_button.config(state=tk.DISABLED if current_clicking else tk.NORMAL,
+                        bg="#555555" if current_clicking else "#007ACC",
+                        relief="sunken" if current_clicking else "raised")
+    stop_button.config(state=tk.NORMAL if current_clicking else tk.DISABLED,
+                       bg="#007ACC" if current_clicking else "#555555",
+                       relief="raised" if current_clicking else "sunken")
+
+def toggle_clicking():
+    global clicking
+    with clicking_lock:
+        clicking = not clicking
+    update_status_label()
+
+def on_press(key):
+    global keybind
+    try:
+        key_name = key.char.lower() if hasattr(key, 'char') and key.char else str(key).replace('Key.', '').lower()
+        if key_name == keybind:
+            root.after(0, toggle_clicking)
+    except AttributeError:
+        pass
+
+def on_exit():
+    exit_event.set()
+    listener.stop()
+    root.quit()
+    sys.exit()
+
+def on_keybind_focus_out(event):
+    global listening_for_keybind
+    if listening_for_keybind:
+        keybind_entry.delete(0, tk.END)
+        keybind_entry.insert(0, keybind)
+        keybind_entry.config(state='disabled', disabledforeground="black", disabledbackground="white")
+        keybind_entry.unbind("<KeyPress>")
+        listening_for_keybind = False
+
+def click_mouse():
+    global cps, click_button, click_type
+
+    if click_button == 'left':
+        btn_down = MOUSEEVENTF_LEFTDOWN
+        btn_up = MOUSEEVENTF_LEFTUP
+    else:
+        btn_down = MOUSEEVENTF_RIGHTDOWN
+        btn_up = MOUSEEVENTF_RIGHTUP
+
+    while not exit_event.is_set():
+        with clicking_lock:
+            current_clicking = clicking
+
+        if current_clicking:
+            effective_cps = cps if 1 <= cps <= 10000 else 10
+            interval = 1.0 / effective_cps
+
+            start_time = time.perf_counter()
+
+            send_mouse_input(btn_down)
+            send_mouse_input(btn_up)
+
+            if click_type == 'double':
+                double_click_gap = max(0.01, interval * 0.2)
+                time.sleep(double_click_gap)
+                send_mouse_input(btn_down)
+                send_mouse_input(btn_up)
+
+            elapsed = time.perf_counter() - start_time
+            time_to_sleep = max(0, interval - elapsed)
+            time.sleep(time_to_sleep)
+        else:
+            time.sleep(0.01)
+
+def apply_settings(event=None):
+    global cps, keybind, click_button, click_type
+
+    cps_raw = cps_entry.get().strip()
+    try:
+        cps_val = int(cps_raw)
+        if 1 <= cps_val <= 10000:
+            cps = cps_val
+        else:
+            raise ValueError
+    except ValueError:
+        cps = 10
+        cps_entry.delete(0, tk.END)
+        cps_entry.insert(0, "10")
+
+    keybind_val = keybind_entry.get().strip().lower()
+    if len(keybind_val) == 1:
+        keybind = keybind_val
+
+    click_button = button_choice.get().lower()
+    click_type = type_choice.get().lower()
+
+def validate_cps_input(char):
+    return char.isdigit()
+
+root = tk.Tk()
+root.title("Stopped - ClickRush")
+root.geometry("350x400")
+root.resizable(False, False)
+root.config(bg="white")
+
+try:
+    root.iconbitmap(resource_path("mouse.ico"))
+except:
+    pass
+
+vcmd = (root.register(validate_cps_input), '%S')
+header_font = ("Helvetica", 12, "bold")
+
+tk.Label(root, text="CPS (1–10000):", font=header_font, bg="white").pack(pady=(20, 5))
+cps_entry = tk.Entry(root, font=("Helvetica", 10), justify='center', validate="key", validatecommand=vcmd)
+cps_entry.insert(0, str(cps))
+cps_entry.pack(pady=(0, 15))
+cps_entry.bind("<FocusOut>", apply_settings)
+
+listening_for_keybind = False
+
+def start_listening_for_keybind(event):
+    global listening_for_keybind
+    if not listening_for_keybind:
+        keybind_entry.config(state='normal')
+        keybind_entry.delete(0, tk.END)
+        keybind_entry.focus()
+        listening_for_keybind = True
+        keybind_entry.bind("<KeyPress>", set_keybind_from_keypress)
+
+def set_keybind_from_keypress(event):
+    global keybind, listening_for_keybind
+    key_char = event.char.lower() if event.char and len(event.char) == 1 else None
+
+    if key_char:
+        keybind = key_char
+        keybind_entry.delete(0, tk.END)
+        keybind_entry.insert(0, keybind)
+    else:
+        keybind_entry.delete(0, tk.END)
+        keybind_entry.insert(0, keybind)
+
+    keybind_entry.config(state='disabled', disabledforeground="black", disabledbackground="white")
+    keybind_entry.unbind("<KeyPress>")
+    listening_for_keybind = False
+
+tk.Label(root, text="Toggle Key:", font=header_font, bg="white").pack(pady=(5, 5))
+keybind_entry = tk.Entry(root, font=("Helvetica", 10), justify='center')
+keybind_entry.insert(0, keybind)
+keybind_entry.pack(pady=(0, 15))
+keybind_entry.config(state='disabled', disabledforeground="black", disabledbackground="white")
+keybind_entry.bind("<Button-1>", start_listening_for_keybind)
+
+tk.Label(root, text="Mouse Button:", font=header_font, bg="white").pack(pady=(5, 5))
+button_choice = ttk.Combobox(root, values=["Left", "Right"], state="readonly", font=("Helvetica", 10), justify='center')
+button_choice.set("Left")
+button_choice.pack(pady=(0, 15))
+button_choice.bind("<<ComboboxSelected>>", apply_settings)
+
+tk.Label(root, text="Click Type:", font=header_font, bg="white").pack(pady=(5, 5))
+type_choice = ttk.Combobox(root, values=["Single", "Double"], state="readonly", font=("Helvetica", 10), justify='center')
+type_choice.set("Single")
+type_choice.pack(pady=(0, 15))
+type_choice.bind("<<ComboboxSelected>>", apply_settings)
+
+button_frame = tk.Frame(root, bg="white")
+button_frame.pack(pady=(10, 20))
+
+start_button = tk.Button(button_frame, text="Start", font=("Helvetica", 11), width=10,
+                         bg="#007ACC", fg="white", relief="raised", command=toggle_clicking)
+stop_button = tk.Button(button_frame, text="Stop", font=("Helvetica", 11), width=10,
+                        bg="#555555", fg="white", relief="sunken", state=tk.DISABLED, command=toggle_clicking)
+start_button.grid(row=0, column=0, padx=5)
+stop_button.grid(row=0, column=1, padx=5)
+
+tk.Button(root, text="Exit", font=("Helvetica", 11), bg="gray", fg="white", relief="flat", command=on_exit).pack(pady=(15, 5))
+
+listener = pynput.keyboard.Listener(on_press=on_press)
+listener.start()
+
+click_thread = Thread(target=click_mouse, daemon=True)
+click_thread.start()
+
+root.protocol("WM_DELETE_WINDOW", on_exit)
+root.mainloop()
