@@ -36,7 +36,7 @@
 ## 🛠️ Download & Run
 
 Download the latest version here:  
-🔗 [ClickRush Most Recent Release]([https://github.com/Cgree791/ClickRush/releases/tag/Clickrushv](https://github.com/Cgree791/ClickRush/releases/tag/clickrushv4)
+🔗 [ClickRush Most Recent Release]([https://github.com/Cgree791/ClickRush/releases/tag/Clickrushv](https://github.com/Cgree791/ClickRush/releases/tag/clickrushv4))
 
 Then just download and run `ClickRush.py`  
 *(depending on version)*
